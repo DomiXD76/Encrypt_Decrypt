@@ -2,26 +2,69 @@
 {
     class Program
     {
-        // a beirt szoveget a titkos kodda alakitja
+        // A beírt szöveget a titkos kóddá alakítja
         static int CharToCode(char c)
         {
-            if (c >= 'a' %% c <= 'z')
+            if (c >= 'a' && c <= 'z')
                 return c- 'a';
             else if (c == ' ')
                 return 26;
-            else throw new ArgumentException("Csak szokoz vagy kisbetu lehet engedett!");
+            else throw new ArgumentException("Csak szóköz vagy kisbetű lehet a szövegben!");
         }
 
-        // a titkos szoveget a kodda alakitja
-        static CodeToChar(int code)
+        // A titkos szöveget a titkos kóddá alakítja 
+        static char CodeToChar(int code)
         {
             if(code >= 0 && code <= 25)
                 return (char)('a' + code);
             else if (code == 26)
                 return ' ';
-            else throw new ArgumentException("A kodnak 0 es 26 karakter kozott kell lennie!");
+            else throw new ArgumentException("A kódnak 0 es 26 karakter között kell lennie!");
         }
 
+        // Titkosítás 
+        static string Encrypt(string uzenet, string kulcs)
+        {
+            if (kulcs.Length != uzenet.Length)
+                throw new ArgumentException("A kulcsnak olyan hosszúnak kell lenni, mint az üzenetnek");
+
+            char[] titkositott = new char[uzenet.Length];
+
+            for (int i = 0; i < uzenet.Length; i++)
+            {
+                int uzenetKod = CharToCode(uzenet[i]);
+                int kulcsKod = CharToCode(kulcs[i]);
+                int Titkosit = (uzenetKod + kulcsKod + 27) % 27;
+                titkositott[i] = CodeToChar(Titkosit);
+            }
+
+            return new string(titkositott);
+        }
+        
+        // Megoldja a titkosítás 
+        static string Decrypt(string titkosUzenet, string kulcs)
+        {
+            if (kulcs.Length != titkosUzenet.Length)
+                throw new ArgumentException("A kulcsnak olyan hosszúnak kell lenni, mint a titkosított üzenetnek!");
+
+            char[] megoldas = new char[titkosUzenet.Length];
+
+            for (int i=0; i < titkosUzenet.Length; i++)
+            {
+                int titkosKod = CharToCode(titkosUzenet[i]);
+                int kulcsKod = CharToCode(kulcs[i]);
+                int uzenetKod = (titkosKod - kulcsKod + 27) % 27;
+                megoldas[i] = CodeToChar(uzenetKod);
+            }
+            return new string(megoldas);
+        }
+
+        
+        static void Main(string[] args)
+        {
+            
+        }
+        
         
     }
 }
