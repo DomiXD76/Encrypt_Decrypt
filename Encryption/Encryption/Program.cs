@@ -6,10 +6,11 @@
         static int CharToCode(char c)
         {
             if (c >= 'a' && c <= 'z')
-                return c- 'a';
+                return c - 'a';
             else if (c == ' ')
                 return 26;
-            else throw new ArgumentException("Csak szóköz vagy kisbetű lehet a szövegben!");
+            else 
+                throw new ArgumentException("Csak szóköz vagy kisbetű lehet a szövegben!");
         }
 
         // A titkos szöveget a titkos kóddá alakítja 
@@ -23,18 +24,18 @@
         }
 
         // Titkosítás 
-        static string Encrypt(string uzenet, string kulcs)
+        static string Encrypt(string szoveg, string kulcs)
         {
-            if (kulcs.Length != uzenet.Length)
-                throw new ArgumentException("A kulcsnak olyan hosszúnak kell lenni, mint az üzenetnek");
+            if (kulcs.Length < szoveg.Length)
+                throw new ArgumentException("A kulcsnak legalább  olyan hosszúnak kell lenni, mint az üzenetnek");
 
-            char[] titkositott = new char[uzenet.Length];
+            char[] titkositott = new char[szoveg.Length];
 
-            for (int i = 0; i < uzenet.Length; i++)
+            for (int i = 0; i < szoveg.Length; i++)
             {
-                int uzenetKod = CharToCode(uzenet[i]);
+                int szovegKod = CharToCode(szoveg[i]);
                 int kulcsKod = CharToCode(kulcs[i]);
-                int Titkosit = (uzenetKod + kulcsKod + 27) % 27;
+                int Titkosit = (szovegKod + kulcsKod + 27) % 27;
                 titkositott[i] = CodeToChar(Titkosit);
             }
 
@@ -42,29 +43,56 @@
         }
         
         // Megoldja a titkosítás 
-        static string Decrypt(string titkosUzenet, string kulcs)
+        static string Decrypt(string titkosSzoveg, string kulcs)
         {
-            if (kulcs.Length != titkosUzenet.Length)
-                throw new ArgumentException("A kulcsnak olyan hosszúnak kell lenni, mint a titkosított üzenetnek!");
+            if (kulcs.Length < titkosSzoveg.Length)
+                throw new ArgumentException("A kulcsnak legalább  olyan hosszúnak kell lenni, mint a titkosított üzenetnek!");
 
-            char[] megoldas = new char[titkosUzenet.Length];
+            char[] megoldas = new char[titkosSzoveg.Length];
 
-            for (int i=0; i < titkosUzenet.Length; i++)
+            for (int i = 0; i < titkosSzoveg.Length; i++)
             {
-                int titkosKod = CharToCode(titkosUzenet[i]);
+                int titkosKod = CharToCode(titkosSzoveg[i]);
                 int kulcsKod = CharToCode(kulcs[i]);
-                int uzenetKod = (titkosKod - kulcsKod + 27) % 27;
-                megoldas[i] = CodeToChar(uzenetKod);
+                int szovegKod = (titkosKod - kulcsKod + 27) % 27;
+                megoldas[i] = CodeToChar(szovegKod);
             }
             return new string(megoldas);
         }
 
-        
+        // A titkos és megoldott szöveg kiírása
         static void Main(string[] args)
         {
+            try
+            {
+                // Itt adom meg, a kulcsot és a szöveget
+                string szoveg = "finom almapite";
+                string kulcs = "abcdefghijklmn"; // A kulcs legalább a szöveg hossza
+                // HA kell, a teljes angol ABC
+                // string kulcs = "abcdefghijklmnopqrstuvwxyz"; 
+                string titkositottSzoveg = Encrypt(szoveg, kulcs);
+
+                // A titkos szöveg kiírása
+                Console.WriteLine("Alap szöveg: " + szoveg);
+                Console.WriteLine("Kulcs: " + kulcs);
+                Console.WriteLine("Titkositott szöveg: " + titkositottSzoveg);
+
+                // Elválasztom a titkos es megoldott részeket
+                Console.WriteLine("\n---------------------------------\n");
+
+                // A megoldott szöveg kiírás
+                string megoldottSzoveg = Decrypt(titkositottSzoveg, kulcs);
+                Console.WriteLine("Megoldott szöveg: " + megoldottSzoveg);
+            }
+            catch(Exception ex)
+            {
+                // Ha lenne hiba.
+                Console.WriteLine("Hiba: " + ex.Message);
+            }
+
             
+            Console.ReadKey();
         }
-        
         
     }
 }
